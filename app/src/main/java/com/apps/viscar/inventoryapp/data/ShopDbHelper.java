@@ -25,7 +25,7 @@ public class ShopDbHelper extends SQLiteOpenHelper {
                 ShopContract.ShopEntry.SHOP_COLUMN_NAME + " TEXT NOT NULL," +
                 ShopContract.ShopEntry.SHOP_COLUMN_PRICE + " TEXT NOT NULL," +
                 ShopContract.ShopEntry.SHOP_COLUMN_QUANTITY + " INTEGER NOT NULL DEFAULT 0," +
-                ShopContract.ShopEntry.SHOP_COLUMN_IMAGE + " BLOB NOT NULL" + ");";
+                ShopContract.ShopEntry.SHOP_COLUMN_IMAGE + " BLOB " + ");";
         sqLiteDatabase.execSQL(CREATE_TABLE_SHOP);
     }
 

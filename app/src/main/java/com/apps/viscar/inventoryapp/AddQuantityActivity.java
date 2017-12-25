@@ -1,6 +1,5 @@
 package com.apps.viscar.inventoryapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -26,9 +25,8 @@ public class AddQuantityActivity extends AppCompatActivity {
                 if (quantity == null) {
                     Toast.makeText(getApplicationContext(), getString(R.string.invalid_quantity), Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(AddQuantityActivity.this, DetailsActivity.class);
-                    intent.putExtra("quantity", quantity);
-                    startActivity(intent);
+                    EditorActivity.productQuantity.setText(quantity);
+                    Toast.makeText(AddQuantityActivity.this, R.string.quantity_modified, Toast.LENGTH_SHORT).show();
                 }
             }
         });

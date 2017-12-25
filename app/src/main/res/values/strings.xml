@@ -47,6 +47,10 @@
     <string name="sell_product_failed">Sell Product Failed</string>
     <string name="ok">Ok</string>
     <string name="default_product_quantity">0</string>
+    <string name="file_not_found">File Not Found</string>
+    <string name="image_failed">You should pick an image</string>
+    <string name="enter_data">Enter all  product\'s Data</string>
+    <string name="quantity_modified">Quantity Modified</string>
 
 
 </resources>

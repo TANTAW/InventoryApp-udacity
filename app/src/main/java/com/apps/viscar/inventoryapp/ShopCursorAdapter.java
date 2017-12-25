@@ -1,12 +1,10 @@
 package com.apps.viscar.inventoryapp;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
@@ -25,9 +23,6 @@ import com.apps.viscar.inventoryapp.data.ShopContract.ShopEntry;
 
 public class ShopCursorAdapter extends CursorAdapter {
     private Context mContext;
-    private int quantity;
-    private Uri currentProductUri;
-
     public ShopCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
     }
@@ -39,56 +34,57 @@ public class ShopCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+
         mContext = context;
+
         TextView nameTextView = view.findViewById(R.id.name);
         TextView priceTextView = view.findViewById(R.id.price);
         final TextView quantityTextView = view.findViewById(R.id.quantity);
-        ImageView productView = view.findViewById(R.id.thumbnail);
-        FloatingActionButton fab = view.findViewById(R.id.fab_sale);
+        ImageView imageView = view.findViewById(R.id.thumbnail);
+        FloatingActionButton fabSell = view.findViewById(R.id.fab_sale);
 
-        int nameColumnIndex = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_NAME);
-        int priceColumnIndex = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_PRICE);
-        int quantityColumnIndex = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_QUANTITY);
-        int imageColumnIndex = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_IMAGE);
+        int name_index = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_NAME);
+        int price_index = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_PRICE);
+        int quantity_index = cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_QUANTITY);
+        byte[] mImageByteArray;
+        mImageByteArray = cursor.getBlob(cursor.getColumnIndex(ShopEntry.SHOP_COLUMN_IMAGE));
+        Bitmap productImage = ImageHelper.convertBlobToBitmap(mImageByteArray);
+        final String productName = cursor.getString(name_index);
+        final String productQuantity = cursor.getString(quantity_index);
+        final String productPrice = cursor.getString(price_index);
 
-        int id = cursor.getInt(cursor.getColumnIndex(ShopEntry._ID));
-        Toast.makeText(context, "Id " + id, Toast.LENGTH_SHORT).show();
-        final String name = cursor.getString(nameColumnIndex);
-        final String price = "Price $" + String.valueOf(cursor.getFloat(priceColumnIndex));
-        quantity = cursor.getInt(quantityColumnIndex);
-        final String quantityString = "Quantity " + String.valueOf(quantity);
-
-        final byte[] image = cursor.getBlob(imageColumnIndex);
-        Bitmap thumbnail = getImage(image);
-        nameTextView.setText(name);
-        priceTextView.setText(price);
-        quantityTextView.setText(quantityString);
-        productView.setImageBitmap(thumbnail);
-        currentProductUri = ContentUris.withAppendedId(ShopEntry.CONTENT_URI, id);
-        fab.setOnClickListener(new View.OnClickListener() {
+        if (productImage != null) {
+            imageView.setImageBitmap(productImage);
+            imageView.setVisibility(View.VISIBLE);
+        } else {
+            imageView.setVisibility(View.GONE);
+        }
+        nameTextView.setText(productName);
+        priceTextView.setText(productPrice);
+        quantityTextView.setText(productQuantity);
+        fabSell.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                ContentResolver contentResolver = view.getContext().getContentResolver();
-                ContentValues values = new ContentValues();
-                if (quantity > 0) {
-                    int currentQuantity = quantity;
-                    values.put(ShopEntry.SHOP_COLUMN_QUANTITY, --currentQuantity);
-                    int rowsAffected = contentResolver.update(currentProductUri, values, null, null);
-                    mContext.getContentResolver().notifyChange(currentProductUri, null);
-                    if (rowsAffected == 0) {
-                        Toast.makeText(mContext, mContext.getString(R.string.sell_product_failed), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(mContext, "Item out of stock", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                if (v != null) {
+                    Object obj = v.getTag();
+                    String st = obj.toString();
+                    ContentValues values = new ContentValues();
+                    int quantity = Integer.parseInt(productQuantity);
 
+                    values.put(ShopEntry.SHOP_COLUMN_NAME, productName);
+                    values.put(ShopEntry.SHOP_COLUMN_PRICE, productPrice);
+                    values.put(ShopEntry.SHOP_COLUMN_QUANTITY, quantity >= 1 ? quantity - 1 : 0);
+                    Uri currentProductUri = ContentUris.withAppendedId(ShopEntry.CONTENT_URI, Integer.parseInt(st));
+
+                    int rowsAffected = mContext.getContentResolver().update(currentProductUri, values, null, null);
+                    if (rowsAffected == 0 || quantity == 0) {
+                        Toast.makeText(mContext, "you haven't any quantity for this product", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
-
-    }
-
-    private Bitmap getImage(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        Object obj = cursor.getInt(cursor.getColumnIndex(ShopEntry._ID));
+        fabSell.setTag(obj);
     }
 
 }

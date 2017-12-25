@@ -23,9 +23,6 @@ public final class ShopContract {
         public static final String SHOP_COLUMN_NAME = "name";
         public static final String SHOP_COLUMN_PRICE = "price";
         public static final String SHOP_COLUMN_QUANTITY = "quantity";
-        public static final String SHOP_COLUMN_SUPPLIER_NAME = "supplier_name";
-        public static final String SHOP_COLUMN_SUPPLIER_PHONE = "supplier_phone";
-        public static final String SHOP_COLUMN_SUPPLIER_EMAIL = "supplier_email";
         public static final String SHOP_COLUMN_IMAGE = "image";
 
 
