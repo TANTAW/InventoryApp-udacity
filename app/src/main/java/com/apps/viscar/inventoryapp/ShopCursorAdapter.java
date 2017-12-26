@@ -70,7 +70,6 @@ public class ShopCursorAdapter extends CursorAdapter {
                     String st = obj.toString();
                     ContentValues values = new ContentValues();
                     int quantity = Integer.parseInt(productQuantity);
-
                     values.put(ShopEntry.SHOP_COLUMN_NAME, productName);
                     values.put(ShopEntry.SHOP_COLUMN_PRICE, productPrice);
                     values.put(ShopEntry.SHOP_COLUMN_QUANTITY, quantity >= 1 ? quantity - 1 : 0);
